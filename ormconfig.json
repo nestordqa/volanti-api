@@ -1,0 +1,10 @@
+{
+    "type": "postgres",
+    "host": "db",
+    "port": 5432,
+    "username": "volanti",
+    "password": "volanti123",
+    "database": "volanti",
+    "synchronize": true,
+    "entities": ["dist/**/*.entity{.ts,.js}"]
+}
