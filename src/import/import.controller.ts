@@ -17,9 +17,8 @@ export class ImportController {
             const rawData = await this.importService.readCSV(file.buffer); // Implementa la lectura del CSV
             const enrichedData = await this.importService.enrichData(rawData);
             await this.importService.saveToDatabase(enrichedData); // Implementa la lógica para guardar en la base de datos
-            return { message: 'Importación y enriquecimiento completados' };   
+            return { message: 'Importación y enriquecimiento completados', data: rawData.length };   
         } catch (error) {
-            console.error(error);
             throw new HttpException('Error interno del servidor', HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
