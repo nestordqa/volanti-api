@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import * as dotenv from 'dotenv';
 import { CostumerModule } from './costumer/costumer.module';
 import { VehicleModule } from './vehicle/vehicle.module';
 import { PhoneModule } from './phone/phone.module';
@@ -10,6 +11,7 @@ import { Vehicle } from './vehicle/vehicle.entity';
 import { Phone } from './phone/phone.entity';
 import { Appointment } from './appointment/appointment.entity';
 
+dotenv.config(); // Carga las variables de entorno
 @Module({
     imports: [
         TypeOrmModule.forRoot({
