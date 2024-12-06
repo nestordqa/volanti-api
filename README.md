@@ -1,17 +1,65 @@
-Para inicializar la app de manera totalmente normal: npm run start:dev
+# 🌟 Volanti API Rest 🌟
 
-Para inicializar como prod: npm run start:prod
+¡Bienvenido a la documentación! Este proyecto está construido con **NestJS**, **PostgreSQL** y **Docker**, y está diseñado para ser fácil de usar y altamente eficiente. A continuación, encontrarás toda la información necesaria para comenzar a usarlo.
 
--Púedes levantar la app tambien con Docker, asi no tienes que realizar la instalacion de Postgresql en tu entorno local:
-Levantar: npm run docker:up
-Bajar app: npm run docker:down
+---
 
-nota referente a variables de entorno: DATABASE_HOST si levantas con docker, debe ser db, si levantas en local debe ser localhost.
+## 🚀 Inicialización de la Aplicación
 
-El endpoint /import recibe el archivo a procesar, si se detecta que el mismo no es un archivo csv, va a devolver un error.
+### Modo Desarrollo
 
-En caso exitoso, va a devolver un objeto como el siguiente:
+Para iniciar la aplicación en modo desarrollo, simplemente ejecuta:
 
+```bash
+npm run start:dev
+```
+
+### Modo Producción
+
+Si deseas ejecutar la aplicación en modo producción, utiliza el siguiente comando:
+
+```bash
+npm run start:prod
+```
+
+### Uso de Docker
+
+¡No te preocupes por instalar PostgreSQL en tu entorno local! Puedes levantar la aplicación utilizando Docker. Aquí están los comandos que necesitas:
+
+- **Levantar la aplicación**:
+
+```bash
+npm run docker:up
+```
+
+- **Bajar la aplicación**:
+
+```bash
+npm run docker:down
+```
+
+### 🌐 Variables de Entorno
+
+Recuerda configurar la variable de entorno `DATABASE_HOST` de acuerdo a tu entorno:
+
+- **Con Docker**: `DATABASE_HOST=db`
+- **En local**: `DATABASE_HOST=localhost`
+
+---
+
+## 📁 Endpoint de Importación
+
+La aplicación incluye un endpoint para importar archivos:
+
+### `/import`
+
+Este endpoint recibe un archivo para procesar. **Importante**: si el archivo no es un CSV, se devolverá un error.
+
+#### 🎉 Respuesta Exitosa
+
+Si la importación es exitosa, recibirás un objeto con la siguiente estructura:
+
+```json
 {
     "message": "Importación y enriquecimiento completados",
     "dataAnalyzed": {
@@ -19,25 +67,49 @@ En caso exitoso, va a devolver un objeto como el siguiente:
         "notOk": 18
     }
 }
+```
 
-Indicando en la propiedad ok, las filas del archivo que fueron analizadas exitosamente, y las que no, en la propiedad notOk.
+- **ok**: Número de filas del archivo que fueron analizadas exitosamente.
+- **notOk**: Número de filas que no fueron procesadas correctamente.
 
-### Resumen del Código
+---
 
-1. **Importaciones**: Se importan los módulos y clases necesarios de NestJS, incluyendo `Controller`, `Post`, `Body`, `HttpException`, `HttpStatus`, `UseInterceptors` y `UploadedFile`. También se importa el servicio `ImportService` y el interceptor `FileInterceptor`.
+## 📝 Resumen del Código
 
-2. **Controlador de Importación**: Se define el controlador `ImportController` que maneja las solicitudes de importación de datos.
+### Importaciones
 
-3. **Método `importCSV`**: Este método se encarga de procesar la importación de un archivo CSV. Realiza las siguientes validaciones y acciones:
-   - Verifica si se ha subido un archivo. Si no, lanza una `HttpException` con un código de estado 400 (Bad Request).
-   - Llama al método `readCSV` del servicio `ImportService` para leer los datos del archivo CSV.
-   - Llama al método `enrichData` del servicio `ImportService` para enriquecer los datos leídos.
-   - Llama al método `saveToDatabase` del servicio `ImportService` para guardar los datos enriquecidos en la base de datos.
-   - Devuelve un objeto con un mensaje de éxito y la cantidad de datos importados.
-   - Si ocurre un error, maneja las excepciones de manera adecuada. Si la excepción es una `HttpException`, la vuelve a lanzar. De lo contrario, lanza una nueva `HttpException` con un código de estado 500 (Internal Server Error).
+Se importan los módulos y clases necesarios de NestJS, incluyendo:
 
-### Comentarios
+- `Controller`
+- `Post`
+- `Body`
+- `HttpException`
+- `HttpStatus`
+- `UseInterceptors`
+- `UploadedFile`
 
-1. Se han agregado validaciones para verificar si se ha subido un archivo antes de proceder con la importación y el enriquecimiento de datos.
-2. Se ha manejado adecuadamente la excepción `HttpException`, distinguiéndola de otros tipos de errores y lanzando la excepción correspondiente.
-3. Los comentarios proporcionados describen de manera clara y concisa las responsabilidades del controlador y del método `importCSV`.
+Además, se importa el servicio `ImportService` y el interceptor `FileInterceptor`.
+
+### Controlador de Importación
+
+El controlador `ImportController` se encarga de manejar las solicitudes de importación de datos.
+
+### Método `importCSV`
+
+Este método es el corazón de la importación de archivos CSV y realiza las siguientes acciones:
+
+1. **Verificación de Archivo**: Comprueba si se ha subido un archivo. Si no, lanza una `HttpException` con un código de estado 400 (Bad Request).
+2. **Lectura de Datos**: Llama al método `readCSV` del servicio `ImportService` para leer los datos del archivo.
+3. **Enriquecimiento de Datos**: Llama al método `enrichData` del servicio `ImportService` para enriquecer los datos leídos.
+4. **Guardado en Base de Datos**: Llama al método `saveToDatabase` del servicio `ImportService` para almacenar los datos enriquecidos.
+5. **Respuesta**: Devuelve un objeto con un mensaje de éxito y la cantidad de datos importados.
+6. **Manejo de Errores**: Si ocurre un error, maneja las excepciones adecuadamente, lanzando `HttpException` según corresponda.
+
+### 💡 Comentarios Adicionales
+
+- Se han implementado validaciones para asegurar que se suba un archivo antes de proceder con la importación.
+- Se maneja la excepción `HttpException` de manera diferenciada, asegurando una respuesta adecuada ante errores.
+
+---
+
+¡Espero que esta guía te sea útil! 🚀✨
