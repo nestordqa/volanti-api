@@ -1,3 +1,27 @@
+Para inicializar la app de manera totalmente normal: npm run start:dev
+
+Para inicializar como prod: npm run start:prod
+
+-Púedes levantar la app tambien con Docker, asi no tienes que realizar la instalacion de Postgresql en tu entorno local:
+Levantar: npm run docker:up
+Bajar app: npm run docker:down
+
+nota referente a variables de entorno: DATABASE_HOST si levantas con docker, debe ser db, si levantas en local debe ser localhost.
+
+El endpoint /import recibe el archivo a procesar, si se detecta que el mismo no es un archivo csv, va a devolver un error.
+
+En caso exitoso, va a devolver un objeto como el siguiente:
+
+{
+    "message": "Importación y enriquecimiento completados",
+    "dataAnalyzed": {
+        "ok": 136,
+        "notOk": 18
+    }
+}
+
+Indicando en la propiedad ok, las filas del archivo que fueron analizadas exitosamente, y las que no, en la propiedad notOk.
+
 ### Resumen del Código
 
 1. **Importaciones**: Se importan los módulos y clases necesarios de NestJS, incluyendo `Controller`, `Post`, `Body`, `HttpException`, `HttpStatus`, `UseInterceptors` y `UploadedFile`. También se importa el servicio `ImportService` y el interceptor `FileInterceptor`.

@@ -39,7 +39,10 @@ export class ImportController {
             // Guardar los datos enriquecidos en la base de datos
             await this.importService.saveToDatabase(enrichedData);
 
-            return { message: 'Importación y enriquecimiento completados', data: rawData.length };   
+            return {
+                message: 'Importación y enriquecimiento completados',
+                dataAnalyzed: enrichedData.items
+            };   
         } catch (error) {
             console.log(error);
             // Manejo de errores: Lanza una excepción con un mensaje genérico
