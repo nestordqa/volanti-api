@@ -5,21 +5,45 @@ import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('import')
 export class ImportController {
-  constructor(private readonly importService: ImportService) {}
+    constructor(private readonly importService: ImportService) {}
 
+    /**
+     * Maneja la importación de un archivo CSV.
+     * Valida la existencia del archivo y procesa su contenido.
+     */
     @Post()
     @UseInterceptors(FileInterceptor('file'))
     async importCSV(@UploadedFile() file: Express.Multer.File) {
         try {
+            // Validación: Verifica si se ha subido un archivo
             if (!file) {
                 throw new HttpException('No se ha subido ningún archivo', HttpStatus.BAD_REQUEST);
             }
-            const rawData = await this.importService.readCSV(file.buffer); // Implementa la lectura del CSV
+
+            // Validación: Verifica el tipo de archivo
+            const allowedMimeTypes = ['text/csv', 'application/vnd.ms-excel'];
+            if (!allowedMimeTypes.includes(file.mimetype)) {
+                throw new HttpException('Tipo de archivo no permitido. Solo se aceptan archivos CSV.', HttpStatus.BAD_REQUEST);
+            }
+
+            // Validación: Verifica el tamaño del archivo (por ejemplo, máximo 5MB)
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            if (file.size > maxSize) {
+                throw new HttpException('El archivo es demasiado grande. El tamaño máximo permitido es de 5MB.', HttpStatus.BAD_REQUEST);
+            }
+
+            // Lee el contenido del archivo CSV
+            const rawData = await this.importService.readCSV(file.buffer);
+            // Enriquecer los datos leídos
             const enrichedData = await this.importService.enrichData(rawData);
-            await this.importService.saveToDatabase(enrichedData); // Implementa la lógica para guardar en la base de datos
+            // Guardar los datos enriquecidos en la base de datos
+            await this.importService.saveToDatabase(enrichedData);
+
             return { message: 'Importación y enriquecimiento completados', data: rawData.length };   
         } catch (error) {
-            throw new HttpException('Error interno del servidor', HttpStatus.INTERNAL_SERVER_ERROR);
+            console.log(error);
+            // Manejo de errores: Lanza una excepción con un mensaje genérico
+            throw new HttpException('Error interno del servidor', HttpStatus.INTERNAL_SERVER_ERROR, error);
         }
     }
 }

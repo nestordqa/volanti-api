@@ -35,7 +35,7 @@ export class ImportService {
      * Enriquece un conjunto de datos utilizando la API de OpenAI.
      * Retorna un array de objetos enriquecidos, filtrando los que no se pudieron procesar.
      */
-    async enrichData(data: any[]): Promise<any[]> {
+    async enrichData(data: any[]): Promise<any> {
         let goodItem = 0; // Contador para elementos procesados correctamente
         let badItem = 0; // Contador para elementos que fallaron en el procesamiento
 
@@ -54,14 +54,15 @@ export class ImportService {
             }
         }));
 
-        // Imprime un reporte de los elementos analizados
-        console.info('Reporte de objetos analizados por Open AI: ', {
-            ok: goodItem,
-            notOk: badItem
-        });
-
         // Filtra y devuelve solo los elementos enriquecidos (no undefined)
-        return enrichedData.filter((item) => item !== undefined);
+        // y el objeto que indica cuantos pudieron ser procesados y cuantos no
+        return {
+            data: enrichedData.filter((item) => item !== undefined),
+            items: {
+                ok: goodItem,
+                notOk: badItem
+            }
+        };
     }
 
     /**
@@ -91,6 +92,7 @@ export class ImportService {
         const jsonString = input
             .replace(/(\w+):/g, '"$1":') // Agrega comillas a las claves
             .replace(/'/g, '"'); // Reemplaza comillas simples por comillas dobles
+            console.log(jsonString)
 
         return JSON.parse(jsonString); // Convierte la cadena JSON a un objeto
     }
@@ -101,12 +103,13 @@ export class ImportService {
      */
     private async callOpenAI(item: any): Promise<string> {
         const prompt = this.createPrompt(item);
+        const url = process.env.OPENAI_URL;
         const maxRetries = 3;
         const delayBetweenRetries = 2000; // 2 segundos de espera entre reintentos
 
         for (let attempt = 0; attempt < maxRetries; attempt++) {
             try {
-                const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+                const response = await axios.post(url, {
                     model: 'gpt-3.5-turbo', // O el modelo que desees usar
                     messages: [{
                         role: 'user',
@@ -163,17 +166,19 @@ export class ImportService {
      * Procesa cada objeto para manejar clientes, vehículos, teléfonos y citas.
      */
     public async saveToDatabase(data: EnrichedItem[]): Promise<void> {
-        for (const item of data) {
-            const customer = await this.handleCostumer(item);
-            const vehicle = await this.handleVehicle(item, customer);
-            if (item.phone && item.codigoPais) {
-                await this.handlePhone(item, customer);
-                if (item.fecha) {
-                    await this.handleAppoinment(item, customer, vehicle);
+        if (data && data.length) {
+            data.forEach(async(item) => {
+                const customer = await this.handleCostumer(item);
+                const vehicle = await this.handleVehicle(item, customer);
+                if (item.phone && item.codigoPais) {
+                    await this.handlePhone(item, customer);
+                    if (item.fecha) {
+                        await this.handleAppoinment(item, customer, vehicle);
+                    }
                 }
-            }
+            });
+            console.log('Datos guardados en la base de datos');
         }
-        console.log('Datos guardados en la base de datos');
     }
 
     /**
