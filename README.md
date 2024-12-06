@@ -4,6 +4,21 @@
 
 ---
 
+## 🚀 Instalación
+
+1. Clona el repositorio en tu máquina local:
+
+   ```bash
+   git clone https://github.com/nestordqa/volanti-api.git
+   cd volanti-api
+   ```
+
+2. Instala las dependencias necesarias:
+
+   ```bash
+   npm install
+   ```
+
 ## 🚀 Inicialización de la Aplicación
 
 ### Modo Desarrollo
