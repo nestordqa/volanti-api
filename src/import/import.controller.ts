@@ -37,7 +37,7 @@ export class ImportController {
             // Enriquecer los datos leídos
             const enrichedData = await this.importService.enrichData(rawData);
             // Guardar los datos enriquecidos en la base de datos
-            await this.importService.saveToDatabase(enrichedData);
+            await this.importService.saveToDatabase(enrichedData?.data);
 
             return {
                 message: 'Importación y enriquecimiento completados',

@@ -89,7 +89,6 @@ export class ImportService {
      * Asegura que las claves estén correctamente formateadas con comillas.
      */
     private transformToObject(input: string) {
-        console.log('Input JSON:', input); // Agrega esta línea para depurar
         // Reemplaza comillas simples por comillas dobles y agrega comillas a las claves
         const jsonString = input
             .replace(/(\w+):/g, '"$1":') // Agrega comillas a las claves
@@ -191,6 +190,7 @@ export class ImportService {
      */
     private async handleCostumer(item: EnrichedItem): Promise<CustomerType> {
         let customer = await this.customerRepository.findOne({ where: { name: item.nombre } });
+        console.log(customer, 'SOY EL CLIENTE, EXISTO PAPI');
         try {
             if (!customer) {
                 customer = this.customerRepository.create({
