@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
 import { VehicleService } from './vehicle.service';
 import { Vehicle } from './vehicle.entity';
 
@@ -20,16 +20,6 @@ export class VehicleController {
     }
 
     /**
-     * Crea un nuevo vehículo.
-     * @param vehicle Datos del vehículo a crear.
-     * @returns El vehículo creado.
-     */
-    @Post()
-    async create(@Body() vehicle: Vehicle): Promise<Vehicle> {
-        return this.vehicleService.create(vehicle);
-    }
-
-    /**
      * Obtiene un vehículo por su ID, incluyendo su cliente y citas.
      * @param id Identificador del vehículo.
      * @returns El vehículo correspondiente al ID.
@@ -37,5 +27,27 @@ export class VehicleController {
     @Get(':id')
     async findOne(@Param('id') id: number): Promise<Vehicle> {
         return this.vehicleService.findOneWithRelations(id);
+    }
+
+    /**
+     * Actualiza un vehículo existente.
+     * @param id Identificador del vehículo a actualizar.
+     * @param vehicle Datos actualizados del vehículo.
+     * @returns El vehículo actualizado.
+     */
+    @Put(':id')
+    async update(@Param('id') id: number, @Body() vehicle: Vehicle): Promise<Vehicle> {
+        return this.vehicleService.update(id, vehicle);
+    }
+
+    /**
+     * Elimina un vehículo por su ID.
+     * @param id Identificador del vehículo a eliminar.
+     * @returns Mensaje de confirmación.
+     */
+    @Delete(':id')
+    async remove(@Param('id') id: number): Promise<string> {
+        await this.vehicleService.remove(id);
+        return `Vehicle with ID ${id} has been removed`;
     }
 }
