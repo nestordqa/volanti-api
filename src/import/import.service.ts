@@ -89,7 +89,6 @@ export class ImportService {
      * Asegura que las claves estén correctamente formateadas con comillas.
      */
     private transformToObject(input: string) {
-        console.log('Input JSON:', input); // Agrega esta línea para depurar
         // Reemplaza comillas simples por comillas dobles y agrega comillas a las claves
         const jsonString = input
             .replace(/(\w+):/g, '"$1":') // Agrega comillas a las claves
