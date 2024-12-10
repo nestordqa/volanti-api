@@ -190,7 +190,6 @@ export class ImportService {
      */
     private async handleCostumer(item: EnrichedItem): Promise<CustomerType> {
         let customer = await this.customerRepository.findOne({ where: { name: item.nombre } });
-        console.log(customer, 'SOY EL CLIENTE, EXISTO PAPI');
         try {
             if (!customer) {
                 customer = this.customerRepository.create({
